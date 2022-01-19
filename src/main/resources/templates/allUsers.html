@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Admin panel</title>
+</head>
+<body>
+
+<div id="header" class="d-flex bg-dark p-0">
+    <div id="header_username" class="p-2 text-white font-weight-bold"></div>
+    <div id="header_roles" class="p-2 w-100 text-white"></div>
+    <a class="p-2 text-secondary text-right text-decoration-none" href="/logout"> Logout </a>
+</div>
+<div class="row mr-0">
+
+    <div class="col-2 mt-3 p-0">
+        <div id="tablist" class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+            <a id="admin_tab" class="nav-item nav-link ml-2 active" data-toggle="pill" href="#admin_panel" role="tab"
+               aria-controls="admin_panel" aria-selected="true">Admin</a>
+            <a id="user_tab" class="nav-item nav-link ml-2" data-toggle="pill" href="#user_panel" role="tab"
+               aria-controls="user_panel" aria-selected="true">User</a>
+
+        </div>
+    </div>
+    <div class="col-10 pl-0 pr-0">
+        <div class="tab-content bg-light p-2">
+            <div class="tab-pane fade show active ml-3 mr-3" style="height: 700px;" id="admin_panel" role="tabpanel"
+                 aria-labelledby="admin_panel">
+                <h1>Admin panel</h1>
+                <nav>
+                    <div class="nav nav-tabs" role="tablist">
+                        <a class="nav-item nav-link active" data-toggle="tab" role="tab" href="#users_table">Users
+                            table</a>
+                        <a class="nav-item nav-link" data-toggle="tab" role="tab" href="#new_user">New User</a>
+                    </div>
+                </nav>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active border" id="users_table" role="tabpanel">
+                        <div class="ml-3 pt-1 d-flex border-bottom"><h4> All users</h4></div>
+                        <div class="bg-white p-3">
+                            <table id="usersTable" class="table table-striped border-top">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Email</th>
+                                    <th>Password</th>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade border" id="new_user" role="tabpanel">
+                        <div class="pl-3 pt-1 d-flex border-bottom"><h4> Add new user</h4></div>
+                        <div class="container bg-white text-center p-3">
+                            <form id="formNewUser" style="width: 300px;"
+                                  class="form-signin mx-auto font-weight-bold">
+                                <p>
+                                    <label>Email</label>
+                                    <input class="form-control form-control-sm" type="text"
+                                           id="newEmail" placeholder="Email" required autofocus>
+                                </p>
+                                <p>
+                                    <label>Password</label>
+                                    <input class="form-control form-control-sm" type="password" required
+                                           id="newPassword" placeholder="Password">
+                                </p>
+                                <p>
+                                    <label>Username</label>
+                                    <input class="form-control form-control-sm" type="text" required
+                                           id="newUsername" placeholder="Username" value="">
+                                </p>
+                                <p>
+                                    <label>Role</label>
+                                    <select id="newRoles" class="custom-select" multiple size="2">
+                                        <option th:each="role : ${allRoles}"
+                                                th:value="${role.name}"
+                                                th:text="${role.dontPref()}"></option>
+                                    </select>
+                                    <br>
+                                </p>
+                            </form>
+                            <button onclick="newUser()" class="btn btn-success">Add new user</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade pl-3" style="height: 700px;" id="user_panel" role="tabpanel"
+                 aria-labelledby="user_panel">
+                <h1>User information-page</h1>
+                <div class="pl-3 pt-1 d-flex border-top border-left border-right"><h4> About user</h4></div>
+                <div class="bg-white border p-3">
+                    <table class="table table-striped border-top">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                        </tr>
+                        </thead>
+                        <tbody id="user_info"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalWindow"></div>
+<div id="NewUserCreated" class="modal fade mx-auto" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm mx-auto" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Для активации плагинов -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+<script src="/allUsers.js"></script>
+<script src="/user.js"></script>
+
+</body>
+</html>
